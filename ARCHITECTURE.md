@@ -3,7 +3,7 @@
 ## Implemented foundation
 Next.js App Router + TypeScript + Tailwind. Server-only content adapter isolates future CMS; pure validation/filter/FAQ/booking URL functions are independently testable. No database or microservice yet. Dependencies resolve into a lockfile; no globally installed package manager required on this workstation.
 
-## Recommendation pending approval
+## Approved direction; hosting pending
 Payload CMS integrated with Next.js, PostgreSQL and a Node-capable host with durable media storage. Payload provides established authentication and a content admin rather than custom auth. Its documented Node and Next compatibility must match the final installed version before integration. PostgreSQL provides a migration/backup path but adds operational cost. Host selection must include runtime, database backups, storage, SMTP, region/privacy and maintenance ownership. No service has been purchased.
 
 Alternatives: Git-backed CMS reduces database operations but imposes repository authentication/editor workflow constraints; externally hosted CMS introduces vendor quotas and potential recurring fees. Final choice needs client approval and hosting constraints.
@@ -21,3 +21,5 @@ Bounded request body, same-origin check, Zod validation and honeypot exist. Deli
 
 ## Subsequent approval
 User approved Payload + PostgreSQL direction on 2026-11-19; hosting/vendor/cost approval remains separate. CMS runtime and migrations are not implemented yet.
+
+Contact origin is compared against explicit SITE_URL (exact origin without trailing slash). Development defaults to http://127.0.0.1:3000; production requires configuration. Do not infer public origin from untrusted forwarded headers. Current apartment slugs are build-enumerated; CMS publishing must add authenticated invalidation and runtime slug handling before content publishing can be enabled.

@@ -14,3 +14,5 @@
 - Contact remains unavailable until delivery/spam/privacy requirements are complete.
 
 - User subsequently approved Payload + PostgreSQL direction; hosting and costs remain pending. User reaffirmed removal of buying/selling across every section. Selecting home frame did not remove Starter MCP quota blocker.
+
+2026-11-20: User supplied 23 PNG design exports as authorized Figma fallback. Rebuilt visual direction using inspected references; independent approved photo/font assets still pending. No screenshot was embedded as app UI. All sales messaging removed from implemented pages.

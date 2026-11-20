@@ -8,3 +8,7 @@ CMS anonymous/draft/mutation authorization, admin login/publishing/preview, rest
 
 ## Execution record
 Pending dependency installation and local execution. Do not interpret written tests as passed tests. Actual command results will be appended.
+
+2026-11-20 foundation verification: 4/4 domain tests passed; TypeScript passed; ESLint passed without warnings; Next.js production build passed. Playwright against local production output: 18/18 passed in 39.8s across desktop/tablet/mobile Chromium (installed Chrome channel). Development-server runs exposed and fixed contact origin and streamed 404 issues; one cold development navigation remained unstable, so CI/browser suite now uses built production output. Smoobu and CMS authentication/publishing remain unverified.
+
+2026-11-20 screenshot-adapted slice: production build including TypeScript passed; ESLint passed without warnings; 4/4 domain tests passed. Final Playwright run against local production build: 24/24 passed in 1.3m, covering desktop/tablet/mobile, capacity/amenity search, mobile navigation, contact validation and error states, 404, approved FAQ fallback, overflow/keyboard skip link and rental-only text across public routes. A select-label naming issue found by the expanded suite was fixed with explicit aria-labelledby. Desktop/tablet/mobile screenshots inspected; final photography/font fidelity remains pending.

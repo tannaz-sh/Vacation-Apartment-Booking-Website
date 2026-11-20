@@ -27,6 +27,9 @@ On this Windows machine, invoke pnpm through Node if it is absent from PATH:
 
 ## Current boundaries
 
-Neutral structural preview; Figma metadata inspected but visual context blocked by Starter MCP quota. No claim of visual fidelity. Contact validates but returns 503 without delivery. Booking requires a verified provider URL and exact hostname. No custom checkout, accounts, rates, fake confirmation, or admin authentication. CMS is a pending architecture decision. Legal pages are unpublished placeholders. Robots blocks indexing and sitemap is empty.
+Rental-adapted visual direction based on user-supplied desktop/mobile PNG exports. Figma MCP remains quota-blocked; source photo/font assets are still missing, so image slots are explicitly pending. No claim of pixel-exact fidelity. Contact validates but returns 503 without delivery. Booking requires a verified provider URL and exact hostname. No custom checkout, accounts, rates, fake confirmation, or admin authentication. Payload + PostgreSQL is approved; the CMS runtime is not implemented yet. Legal pages are unpublished placeholders. Robots blocks indexing and sitemap is empty.
 
 See TASKS.md for implementation status, TEST_PLAN.md for evidence, and DEPLOYMENT.md for release gates. No production deployment is authorized.
+
+## Verification of this slice
+Production build, TypeScript and lint pass. Four domain tests and 24 Playwright checks pass across desktop/tablet/mobile Chromium. See TEST_PLAN.md for limitations. Local browser checks used PLAYWRIGHT_CHANNEL=chrome; CI installs Chromium.
