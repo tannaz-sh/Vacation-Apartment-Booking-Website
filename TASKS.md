@@ -47,3 +47,6 @@
 Target is 30 working days, dependent on access, content and approvals. No schedule completion claims.
 
 Final current-slice checks: lint, TypeScript, production build, 4 domain tests and 24 browser tests passed. Local production preview: http://127.0.0.1:3000. No CMS, actual mail delivery or real Smoobu verification is claimed.
+
+- [x] Local commits saved on feat/rental-foundation; working tree verified clean before delivery notes.
+- [ ] Push blocked by missing CLI GitHub authentication; connector has no push permission. CI workflow is written but has not run remotely.

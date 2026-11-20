@@ -33,3 +33,6 @@ See TASKS.md for implementation status, TEST_PLAN.md for evidence, and DEPLOYMEN
 
 ## Verification of this slice
 Production build, TypeScript and lint pass. Four domain tests and 24 Playwright checks pass across desktop/tablet/mobile Chromium. See TEST_PLAN.md for limitations. Local browser checks used PLAYWRIGHT_CHANNEL=chrome; CI installs Chromium.
+
+## Git delivery
+Work is committed locally on feat/rental-foundation. Push could not authenticate; sign in through Git Credential Manager and then push this branch. No changes were sent to main. Remote CI has not run.
