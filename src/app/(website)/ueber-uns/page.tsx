@@ -1,0 +1,5 @@
+import Link from 'next/link';
+import { getPage } from '@/lib/content';
+export const metadata = { title: 'Über uns' };
+export const dynamic = 'force-dynamic';
+export default async function About() { const page = await getPage('ueber-uns'); return <><div className="breadcrumbs"><Link href="/">Startseite</Link> / Über uns</div><div className="split"><div><div className="eyebrow">RF SAUERLAND IMMOBILIEN</div><h1>{page?.title ?? <>Persönlich. Regional.<br/>Zeit für Ihre Auszeit.</>}</h1><p className="lead">{page?.intro ?? 'Ferienwohnungen für kurze Aufenthalte in Winterberg im Sauerland.'}</p><p>Unsere Website begleitet Sie bei der Auswahl einer Unterkunft und führt Sie zum Buchungsportal für Ihre Reisedaten.</p><Link className="button" href="/kontakt">Kontakt aufnehmen</Link></div><div className="image-pending"><span>Gastgeber- und Standortfoto folgt nach Freigabe</span></div></div>{page?.sections?.map(section => <section className="section" key={section.id}><div className="eyebrow">{section.eyebrow}</div><h2>{section.title}</h2><p>{section.body}</p></section>)}</>; }
