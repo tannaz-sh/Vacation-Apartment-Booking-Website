@@ -17,7 +17,7 @@
 - [ ] Obtain separate approved photo/font assets; replace clearly marked image slots and verify final fidelity.
 - [x] Architecture direction approved: Payload + PostgreSQL + Node host; no service purchases.
 - [ ] Select/approve host and operational budget; verify Payload/runtime compatibility.
-- [ ] Add Payload collections: users, media, apartments, pages, FAQs; versions/drafts and SEO fields.
+- [x] Add Payload collections: users, media, apartments, pages, FAQs; versions/drafts and SEO fields.
 - [ ] Implement server-side access: public published content only; authenticated admin writes; protect first-user bootstrap; editor only if requested.
 - [ ] Configure private preview URLs/session, publish invalidation, migrations and backups.
 - [ ] Test anonymous draft denial, write denial, admin publishing and restoration with isolated test database.

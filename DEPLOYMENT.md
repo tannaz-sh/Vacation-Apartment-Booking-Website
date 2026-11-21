@@ -8,6 +8,8 @@ Install locked dependencies, configure environment outside Git, run typecheck/li
 ## Planned production topology
 Node-compatible Next.js host + Payload + PostgreSQL + durable media. Host/vendor and pricing pending. Confirm supported Node/Next/Payload matrix, HTTPS, trusted proxy/origin behavior, secret management, media limits, database connectivity and operator-owned account recovery before deployment.
 
+Minimum target: Node.js 24, PostgreSQL 16 or newer, 2 vCPU and 2 GB RAM; 4 GB RAM is recommended for application builds. Require TLS, environment-variable secrets, daily database backups, release-time migrations, separate staging/production environments and durable S3-compatible media storage. Local `.local/media` storage must not be used in production. Do not purchase or deploy until vendor, region, storage, backup retention and budget are approved.
+
 ## Backup procedure to implement/rehearse
 1. Schedule encrypted PostgreSQL backups and media snapshots; record retention, location, owner and restore credentials outside this repository.
 2. Before migrations, take a timestamped database dump, media snapshot, deployed commit ID and configuration inventory (without secret values in logs).

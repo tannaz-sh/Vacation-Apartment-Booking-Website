@@ -20,6 +20,6 @@ Bounded request body, same-origin check, Zod validation and honeypot exist. Deli
 - https://support.smoobu.com/hc/en-us/articles/360010836700-Add-the-Booking-Engine-to-your-website
 
 ## Subsequent approval
-User approved Payload + PostgreSQL direction on 2026-11-19; hosting/vendor/cost approval remains separate. CMS runtime and migrations are not implemented yet.
+User approved Payload + PostgreSQL direction on 2026-11-19; hosting/vendor/cost approval remains separate. The local CMS runtime uses localhost-only PostgreSQL with ignored persistent data and credentials. Production will require committed migrations, managed backups and durable object storage before deployment.
 
 Contact origin is compared against explicit SITE_URL (exact origin without trailing slash). Development defaults to http://127.0.0.1:3000; production requires configuration. Do not infer public origin from untrusted forwarded headers. Current apartment slugs are build-enumerated; CMS publishing must add authenticated invalidation and runtime slug handling before content publishing can be enabled.
