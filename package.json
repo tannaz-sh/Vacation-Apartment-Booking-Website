@@ -12,7 +12,8 @@
     "test:e2e": "playwright test",
     "db:local": "node scripts/local-db.mjs",
     "cms:types": "node --env-file=.env.local node_modules/payload/bin.js generate:types",
-    "cms:importmap": "node --env-file=.env.local node_modules/payload/bin.js generate:importmap"
+    "cms:importmap": "node --env-file=.env.local node_modules/payload/bin.js generate:importmap",
+    "cms:seed": "node --env-file=.env.local node_modules/tsx/dist/cli.mjs scripts/seed-cms.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.94.0",

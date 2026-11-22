@@ -93,8 +93,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -130,6 +134,10 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   name: string;
+  /**
+   * Administrators manage users; editors manage website content.
+   */
+  role: 'admin' | 'editor';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -228,16 +236,39 @@ export interface Apartment {
  */
 export interface Page {
   id: number;
-  slug: 'startseite' | 'ueber-uns' | 'kontakt' | 'impressum' | 'datenschutz' | 'buchungsbedingungen';
+  slug:
+    | 'startseite'
+    | 'ferienwohnungen'
+    | 'buchen'
+    | 'faq'
+    | 'ueber-uns'
+    | 'kontakt'
+    | 'impressum'
+    | 'datenschutz'
+    | 'buchungsbedingungen';
+  eyebrow?: string | null;
   title: string;
   intro?: string | null;
   heroImage?: (number | null) | Media;
   sections?:
     | {
+        layout: 'text' | 'cards' | 'imageText' | 'cta';
+        theme?: ('plain' | 'soft' | 'dark') | null;
         eyebrow?: string | null;
         title: string;
         body: string;
         image?: (number | null) | Media;
+        items?:
+          | {
+              title: string;
+              body: string;
+              linkLabel?: string | null;
+              linkUrl?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        linkLabel?: string | null;
+        linkUrl?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -354,6 +385,7 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -448,16 +480,30 @@ export interface ApartmentsSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   slug?: T;
+  eyebrow?: T;
   title?: T;
   intro?: T;
   heroImage?: T;
   sections?:
     | T
     | {
+        layout?: T;
+        theme?: T;
         eyebrow?: T;
         title?: T;
         body?: T;
         image?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              linkLabel?: T;
+              linkUrl?: T;
+              id?: T;
+            };
+        linkLabel?: T;
+        linkUrl?: T;
         id?: T;
       };
   seo?:
@@ -521,6 +567,120 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  businessName: string;
+  locationLine?: string | null;
+  previewNotice?: string | null;
+  headerCta?: {
+    label?: string | null;
+    url?: string | null;
+  };
+  navigation?:
+    | {
+        label: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  footerText?: string | null;
+  footerColumns?:
+    | {
+        title: string;
+        links?:
+          | {
+              label: string;
+              url: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  legalLinks?:
+    | {
+        label: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  contact?: {
+    email?: string | null;
+    phone?: string | null;
+    address?: string | null;
+  };
+  defaultSeo: {
+    title: string;
+    description?: string | null;
+  };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  businessName?: T;
+  locationLine?: T;
+  previewNotice?: T;
+  headerCta?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
+  navigation?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  footerText?: T;
+  footerColumns?:
+    | T
+    | {
+        title?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  legalLinks?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  contact?:
+    | T
+    | {
+        email?: T;
+        phone?: T;
+        address?: T;
+      };
+  defaultSeo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

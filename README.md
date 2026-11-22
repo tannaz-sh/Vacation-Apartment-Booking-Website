@@ -15,6 +15,8 @@ pnpm dev
 
 Open http://127.0.0.1:3000 and create the first administrator at http://127.0.0.1:3000/admin. The local database command creates ignored random credentials, binds PostgreSQL to localhost only, and persists data in `.local/postgres`. Optional `.env.local`: `DEVELOPMENT_FIXTURES=true` enables clearly labeled examples only in development. Production always excludes fixtures.
 
+After the first administrator exists, run `pnpm cms:seed` to create any missing page entries as drafts. Manage shared navigation, footer, contact details and default SEO under `Site settings`; manage page-specific copy and sections under `Pages`.
+
 ```sh
 pnpm typecheck
 pnpm lint

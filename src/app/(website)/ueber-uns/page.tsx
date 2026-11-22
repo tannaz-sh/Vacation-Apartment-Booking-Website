@@ -1,5 +1,10 @@
 import Link from 'next/link';
-import { getPage } from '@/lib/content';
-export const metadata = { title: 'Über uns' };
+import { CmsSections } from '@/components/cms-sections';
+import { getPage, getPageMetadata } from '@/lib/content';
+
 export const dynamic = 'force-dynamic';
-export default async function About() { const page = await getPage('ueber-uns'); return <><div className="breadcrumbs"><Link href="/">Startseite</Link> / Über uns</div><div className="split"><div><div className="eyebrow">RF SAUERLAND IMMOBILIEN</div><h1>{page?.title ?? <>Persönlich. Regional.<br/>Zeit für Ihre Auszeit.</>}</h1><p className="lead">{page?.intro ?? 'Ferienwohnungen für kurze Aufenthalte in Winterberg im Sauerland.'}</p><p>Unsere Website begleitet Sie bei der Auswahl einer Unterkunft und führt Sie zum Buchungsportal für Ihre Reisedaten.</p><Link className="button" href="/kontakt">Kontakt aufnehmen</Link></div><div className="image-pending"><span>Gastgeber- und Standortfoto folgt nach Freigabe</span></div></div>{page?.sections?.map(section => <section className="section" key={section.id}><div className="eyebrow">{section.eyebrow}</div><h2>{section.title}</h2><p>{section.body}</p></section>)}</>; }
+export const generateMetadata = () => getPageMetadata('ueber-uns', 'Über uns');
+export default async function About() {
+  const page = await getPage('ueber-uns');
+  return <><div className="breadcrumbs"><Link href="/">Startseite</Link> / Über uns</div><div className="eyebrow">{page?.eyebrow ?? 'RF SAUERLAND IMMOBILIEN'}</div><h1>{page?.title ?? 'Persönlich. Regional. Zeit für Ihre Auszeit.'}</h1><p className="lead">{page?.intro ?? 'Ferienwohnungen für kurze Aufenthalte in Winterberg im Sauerland.'}</p><CmsSections sections={page?.sections}/>{!page && <p>Die persönliche Vorstellung wird im Adminbereich vorbereitet.</p>}</>;
+}

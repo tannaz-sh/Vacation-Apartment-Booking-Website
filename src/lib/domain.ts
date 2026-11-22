@@ -7,6 +7,8 @@ export const apartmentSchema = z.object({
   capacity: z.number().int().positive(), bedrooms: z.number().int().nonnegative(),
   amenities: z.array(z.string()), smoobuApartmentId: z.string().nullable(),
   featuredImage: z.object({ url: z.string(), alt: z.string() }).nullable().optional(),
+  gallery: z.array(z.object({ url: z.string(), alt: z.string(), caption: z.string().nullable() })).optional(),
+  arrival: z.string().nullable().optional(), houseRules: z.string().nullable().optional(),
   status: z.enum(['draft', 'published']), fixture: z.boolean(),
 });
 export type Apartment = z.infer<typeof apartmentSchema>;
