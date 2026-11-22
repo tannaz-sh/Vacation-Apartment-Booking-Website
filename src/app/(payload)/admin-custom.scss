@@ -1,0 +1,26 @@
+:root {
+  --theme-elevation-0: #f8f8f5;
+  --theme-elevation-50: #f0f1eb;
+  --theme-elevation-100: #e5e8df;
+  --theme-elevation-800: #223c34;
+  --theme-elevation-900: #142d25;
+  --theme-elevation-1000: #0d201a;
+  --theme-success-500: #2f6b55;
+}
+
+.rf-admin-logo { display: grid; grid-template-columns: 42px 1fr; column-gap: 10px; align-items: center; color: currentColor; }
+.rf-admin-logo > span, .rf-admin-icon { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: #223c34; color: #f2ddb0; font-family: Georgia, serif; font-size: 16px; }
+.rf-admin-logo > span { grid-row: 1 / 3; }
+.rf-admin-logo strong { font-family: Georgia, serif; font-size: 18px; font-weight: 500; line-height: 1.1; }
+.rf-admin-logo small { font-size: 10px; letter-spacing: .09em; text-transform: uppercase; opacity: .72; }
+.rf-admin-intro { max-width: 520px; margin-bottom: 28px; }
+.rf-admin-intro h1, .rf-admin-dashboard h1 { margin: 6px 0 10px; font-family: Georgia, serif; font-size: clamp(30px, 4vw, 44px); font-weight: 400; letter-spacing: -.035em; }
+.rf-admin-intro p, .rf-admin-dashboard p { line-height: 1.6; }
+.rf-admin-kicker { margin: 0; color: #806329; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.rf-admin-dashboard { padding: 28px; margin: 0 0 30px; border: 1px solid var(--theme-elevation-100); border-radius: 12px; background: linear-gradient(135deg, #f6f3ea, #eef1eb); color: #142d25; }
+.rf-admin-dashboard p:last-child { max-width: 760px; margin-bottom: 0; }
+
+@media (max-width: 768px) {
+  .rf-admin-dashboard { padding: 22px; }
+  .rf-admin-logo small { display: none; }
+}

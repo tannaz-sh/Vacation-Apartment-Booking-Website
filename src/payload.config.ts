@@ -1,7 +1,21 @@
 import path from 'node:path';
 import { buildConfig, type Access, type CollectionConfig, type Field, type GlobalConfig } from 'payload';
 import { postgresAdapter } from '@payloadcms/db-postgres';
+import { de } from '@payloadcms/translations/languages/de';
 import sharp from 'sharp';
+
+function requiredEnv(name: 'DATABASE_URL' | 'PAYLOAD_SECRET') {
+  const value = process.env[name]?.trim();
+  if (!value) throw new Error(`${name} is required.`);
+  return value;
+}
+
+const siteURL = new URL(process.env.SITE_URL || 'http://127.0.0.1:3000');
+if (!['http:', 'https:'].includes(siteURL.protocol) || siteURL.username || siteURL.password) {
+  throw new Error('SITE_URL must be a credential-free HTTP(S) URL.');
+}
+const secureCookies = siteURL.protocol === 'https:';
+const allowSchemaPush = process.env.PAYLOAD_DB_PUSH === 'true' && (process.env.NODE_ENV !== 'production' || process.env.CI === 'true');
 
 const authenticated: Access = ({ req }) => Boolean(req.user);
 const authenticatedAdmin = ({ req }: Parameters<Access>[0]) => Boolean(req.user);
@@ -23,8 +37,8 @@ const contentURL = (value: unknown) => {
   } catch { return 'Use a local path or a credential-free HTTPS URL.'; }
 };
 const users: CollectionConfig = {
-  slug: 'users', admin: { useAsTitle: 'email' },
-  auth: { maxLoginAttempts: 5, lockTime: 600_000, tokenExpiration: 7200, cookies: { sameSite: 'Lax', secure: false } },
+  slug: 'users', labels: { singular: 'Benutzer', plural: 'Benutzer' }, admin: { useAsTitle: 'email', group: 'Administration' },
+  auth: { maxLoginAttempts: 5, lockTime: 600_000, tokenExpiration: 7200, cookies: { sameSite: 'Lax', secure: secureCookies } },
   access: { read: administrator, create: administrator, update: administrator, delete: administrator, admin: authenticatedAdmin },
   hooks: { beforeChange: [({ data, req, operation }) => {
     if (operation === 'create' && req.user && !data?.role) return { ...data, role: 'editor' };
@@ -38,13 +52,13 @@ const users: CollectionConfig = {
   ],
 };
 const media: CollectionConfig = {
-  slug: 'media', admin: { useAsTitle: 'alt' },
+  slug: 'media', labels: { singular: 'Medium', plural: 'Medien' }, admin: { useAsTitle: 'alt', group: 'Inhalte' },
   access: { read: ({ req }) => req.user ? true : { visibility: { equals: 'public' } }, create: authenticated, update: authenticated, delete: authenticated },
   upload: { staticDir: path.resolve('.local/media'), mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif'], imageSizes: [{ name: 'card', width: 800, height: 600, fit: 'inside' }] },
   fields: [{ name: 'alt', type: 'text', required: true }, { name: 'visibility', type: 'select', required: true, defaultValue: 'private', options: ['private', 'public'], admin: { description: 'Only approved public images are visible to website visitors.' } }],
 };
 const apartments: CollectionConfig = {
-  slug: 'apartments', admin: { useAsTitle: 'title', preview: preview('apartments'), defaultColumns: ['title', 'slug', '_status'] },
+  slug: 'apartments', labels: { singular: 'Ferienwohnung', plural: 'Ferienwohnungen' }, admin: { useAsTitle: 'title', preview: preview('apartments'), defaultColumns: ['title', 'slug', '_status'], group: 'Inhalte' },
   access: editorialAccess, versions: { drafts: true, maxPerDoc: 30 },
   fields: [{ name: 'title', type: 'text', required: true }, slug,
     { name: 'description', type: 'textarea', required: true },
@@ -57,7 +71,7 @@ const apartments: CollectionConfig = {
     { name: 'smoobuApartmentId', type: 'text', admin: { description: 'Provider apartment ID only. Availability, prices and bookings remain in Smoobu.' } }, seo],
 };
 const pages: CollectionConfig = {
-  slug: 'pages', admin: { useAsTitle: 'title', preview: preview('pages') }, access: editorialAccess,
+  slug: 'pages', labels: { singular: 'Seite', plural: 'Seiten' }, admin: { useAsTitle: 'title', preview: preview('pages'), group: 'Inhalte' }, access: editorialAccess,
   versions: { drafts: true, maxPerDoc: 30 }, fields: [
     { name: 'slug', type: 'select', unique: true, required: true, options: ['startseite', 'ferienwohnungen', 'buchen', 'faq', 'ueber-uns', 'kontakt', 'impressum', 'datenschutz', 'buchungsbedingungen'] },
     { name: 'eyebrow', type: 'text' }, { name: 'title', type: 'text', required: true }, { name: 'intro', type: 'textarea' },
@@ -78,13 +92,13 @@ const pages: CollectionConfig = {
     ] }, seo,
   ],
 };
-const faqs: CollectionConfig = { slug: 'faqs', admin: { useAsTitle: 'question' }, access: editorialAccess,
+const faqs: CollectionConfig = { slug: 'faqs', labels: { singular: 'Frage', plural: 'Häufige Fragen' }, admin: { useAsTitle: 'question', group: 'Inhalte' }, access: editorialAccess,
   versions: { drafts: true, maxPerDoc: 30 }, fields: [
     { name: 'question', type: 'text', required: true }, { name: 'answer', type: 'textarea', required: true },
     { name: 'order', type: 'number', defaultValue: 0 },
   ] };
 const siteSettings: GlobalConfig = {
-  slug: 'site-settings', label: 'Site settings', access: { read: () => true, update: authenticated },
+  slug: 'site-settings', label: 'Website-Einstellungen', access: { read: () => true, update: authenticated },
   versions: { drafts: true, max: 30 },
   fields: [
     { name: 'businessName', type: 'text', required: true, defaultValue: 'RF Sauerland Immobilien' },
@@ -109,14 +123,24 @@ const siteSettings: GlobalConfig = {
 };
 
 export default buildConfig({
-  secret: process.env.PAYLOAD_SECRET || '',
-  serverURL: process.env.SITE_URL || 'http://127.0.0.1:3000',
+  secret: requiredEnv('PAYLOAD_SECRET'),
+  serverURL: siteURL.origin,
   routes: { admin: '/admin', api: '/api/cms' },
-  admin: { user: 'users', importMap: { baseDir: path.resolve('src') } },
-  csrf: [process.env.SITE_URL || 'http://127.0.0.1:3000'],
+  admin: {
+    user: 'users',
+    importMap: { baseDir: path.resolve('src') },
+    meta: { titleSuffix: '– RF Sauerland CMS' },
+    components: {
+      graphics: { Logo: '@/components/admin-brand#AdminLogo', Icon: '@/components/admin-brand#AdminIcon' },
+      beforeLogin: ['@/components/admin-brand#AdminLoginIntro'],
+      beforeDashboard: ['@/components/admin-brand#AdminDashboardIntro'],
+    },
+  },
+  csrf: [siteURL.origin],
   graphQL: { disable: true },
+  i18n: { supportedLanguages: { de }, fallbackLanguage: 'de' },
   collections: [users, media, apartments, pages, faqs], globals: [siteSettings], sharp,
   upload: { limits: { fileSize: 10 * 1024 * 1024 } },
-  db: postgresAdapter({ pool: { connectionString: process.env.DATABASE_URL }, push: process.env.PAYLOAD_DB_PUSH === 'true', migrationDir: path.resolve('src/migrations') }),
+  db: postgresAdapter({ pool: { connectionString: requiredEnv('DATABASE_URL') }, push: allowSchemaPush, migrationDir: path.resolve('src/migrations') }),
   typescript: { outputFile: path.resolve('src/payload-types.ts') },
 });

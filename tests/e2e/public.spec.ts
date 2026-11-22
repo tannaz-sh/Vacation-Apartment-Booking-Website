@@ -39,13 +39,39 @@ test('unknown pages have no accidental public access',async({page})=>{
 test('Payload admin is available but requires established authentication',async({page})=>{
  const response=await page.goto('/admin'); expect(response?.status()).toBe(200);
  await expect(page.locator('input[type="email"]')).toBeVisible();
- await expect(page.getByLabel('New Password').or(page.getByLabel('Password',{exact:true})).first()).toBeVisible();
+ await expect(page.locator('input[type="password"]')).toBeVisible();
+ await expect(page.getByText('Sicherer Redaktionszugang')).toBeVisible();
+ await expect(page.getByRole('link',{name:/Passwort|password/i})).toBeVisible();
+});
+test('admin auth states fail closed and public signup is unavailable',async({request,page})=>{
+ const login=await request.post('/api/cms/users/login',{data:{email:'missing-user@example.test',password:'invalid-development-password'}});
+ expect(login.status()).toBe(401);
+ const signup=await request.post('/api/cms/users',{data:{name:'Unauthorized',email:'unauthorized@example.test',password:'do-not-create'}});
+ expect([401,403]).toContain(signup.status());
+ await page.goto('/admin/create-first-user');
+ await expect(page).not.toHaveURL(/create-first-user$/);
+ await page.goto('/admin/forgot');
+ await expect(page.locator('input[type="email"]')).toBeVisible();
 });
 test('responsive layout and keyboard skip link',async({page})=>{
  await page.goto('/'); await page.keyboard.press('Tab'); await expect(page.getByRole('link',{name:'Zum Inhalt'})).toBeFocused();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
  await page.screenshot({path:test.info().outputPath('home.png'),fullPage:true,scale:'css'});
  await page.goto('/kontakt'); expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+test('every public page has one primary heading and no horizontal overflow',async({page})=>{
+ for(const path of ['/','/ferienwohnungen','/ueber-uns','/kontakt','/faq','/buchen','/impressum','/datenschutz','/buchungsbedingungen']){
+  await page.goto(path);
+  await expect(page.locator('main h1')).toHaveCount(1);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+ }
+});
+test('security headers are present and production-only HSTS is not sent over local HTTP',async({request})=>{
+ const response=await request.get('/');
+ expect(response.headers()['x-content-type-options']).toBe('nosniff');
+ expect(response.headers()['x-frame-options']).toBe('DENY');
+ expect(response.headers()['permissions-policy']).toContain('camera=()');
+ expect(response.headers()['strict-transport-security']).toBeUndefined();
 });
 test('home capacity search and mobile navigation work',async({page})=>{
  await page.goto('/');
@@ -54,7 +80,7 @@ test('home capacity search and mobile navigation work',async({page})=>{
  await page.getByRole('button',{name:'Unterkünfte finden'}).click();
  await expect(page).toHaveURL(/ferienwohnungen\?gaeste=4&ausstattung=Balkon/);
  await expect(page.getByLabel('Gäste',{exact:true})).toHaveValue('4');
- if((page.viewportSize()?.width ?? 1000)<700){
+ if((page.viewportSize()?.width ?? 1000)<900){
   await page.locator('summary').filter({hasText:'Menü'}).click();
   await page.getByRole('navigation',{name:'Mobile Navigation'}).getByRole('link',{name:'Über uns',exact:true}).click();
   await expect(page.getByRole('heading',{level:1})).toContainText('Persönlich. Regional.');
