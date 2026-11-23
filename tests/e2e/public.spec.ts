@@ -4,7 +4,8 @@ test('German navigation, empty inventory and safe booking state',async({page})=>
  await page.getByRole('link',{name:'Ferienwohnungen entdecken'}).click();
  await expect(page.getByRole('heading',{level:1})).toHaveText('Ferienwohnungen in Winterberg');
  await expect(page.getByRole('status')).toContainText('vorbereitet');
- await page.goto('/buchen'); await expect(page.getByRole('status')).toContainText('keine Reservierung');
+ await page.goto('/buchen'); await expect(page.getByRole('button',{name:'Buchungsformular laden'})).toBeVisible();
+ await expect(page.getByRole('link',{name:'Smoobu-Buchungsportal öffnen'})).toHaveCount(0);
  await expect(page.locator('body')).not.toContainText(/Kaufen|Verkaufen|Kaufpreis/);
 });
 test('FAQ never invents an answer',async({page})=>{
@@ -28,10 +29,11 @@ test('contact API rejects abuse and never claims delivery',async({request})=>{
  expect((await request.post('/api/kontakt',{data:{...data,message:'x'.repeat(25000)},headers})).status()).toBe(413);
 });
 test('unknown pages and admin have no accidental public access',async({page})=>{
- for(const path of ['/missing','/admin','/ferienwohnungen/missing']) {
+ for(const path of ['/missing','/ferienwohnungen/missing']) {
   const response=await page.goto(path); expect(response?.status()).toBe(404);
   await expect(page.getByRole('heading',{name:'Seite nicht gefunden'})).toBeVisible();
  }
+ await page.goto('/admin'); await expect(page.getByRole('heading',{name:'Verwaltung noch nicht eingerichtet'})).toBeVisible();
 });
 test('responsive layout and keyboard skip link',async({page})=>{
  await page.goto('/'); await page.keyboard.press('Tab'); await expect(page.getByRole('link',{name:'Zum Inhalt'})).toBeFocused();
