@@ -2,6 +2,9 @@
 
 Production is blocked until approved content/legal text, actual design, CMS/auth testing, mail/spam protection, verified Smoobu configuration, host/cost approval and client acceptance. Nothing has been deployed.
 
+Support CMS migration/bootstrap and environment instructions are in ADMIN_GUIDE.md.
+The current preview has no persistent customer database/admin; reset email is disabled.
+
 ## Local/staging
 Install locked dependencies, configure environment outside Git, run typecheck/lint/unit/build/E2E. Use a private staging hostname with authentication and noindex. Set DEVELOPMENT_FIXTURES=false. Keep robots disallow until launch acceptance; SITE_INDEXABLE alone does not remove the deliberate robots block. Do not expose unfinished legal/contact pages as a live service.
 

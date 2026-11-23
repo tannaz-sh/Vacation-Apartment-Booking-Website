@@ -6,13 +6,23 @@
     "dev": "next dev --hostname 127.0.0.1",
     "build": "next build",
     "start": "next start --hostname 127.0.0.1",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint .",
-    "test": "node --experimental-strip-types --test tests/domain.test.ts",
-    "test:e2e": "playwright test"
+    "test": "node --experimental-strip-types --test tests/domain.test.ts tests/support.test.ts",
+    "test:e2e": "playwright test",
+    "cms:types": "payload generate:types",
+    "cms:migrate": "payload migrate",
+    "cms:bootstrap": "payload run scripts/bootstrap-admin.ts",
+    "test:cms": "payload run tests/cms.integration.ts",
+    "test:cms:ui": "payload run tests/cms-ui.run.ts"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "3.94.1",
+    "@payloadcms/next": "3.94.1",
+    "@payloadcms/translations": "3.94.1",
+    "graphql": "16.11.0",
     "next": "16.4.6",
+    "payload": "3.94.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "zod": "4.6.7"

@@ -1,38 +1,61 @@
 # RF Sauerland Immobilien
 
-German holiday-rental website for Winterberg. Local foundation, not production-ready.
+German holiday-rental website for Winterberg. Work in progress; not production-ready.
 
 ## Run
 
-Node 24.22.3 and pnpm are available in this workstation's bundled runtime.
+Use Node 24.22.3 and pnpm 11.25.0. Dependencies are locked.
 
 ```sh
 pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Open http://127.0.0.1:3000. Optional `.env.local`: `DEVELOPMENT_FIXTURES=true` enables clearly labeled examples only in development. Production always excludes fixtures. No real apartments are supplied yet.
+Open http://127.0.0.1:3000. Use `.env.example` as the configuration reference.
+`DEVELOPMENT_FIXTURES=true` enables labeled apartment examples only in development;
+production excludes them. Approved apartment content has not been supplied.
 
 ```sh
 pnpm typecheck
 pnpm lint
 pnpm test
 pnpm build
+# Dedicated local test database only; never point this at customer data.
+TEST_DATABASE_URL=postgresql://USER:PASSWORD@127.0.0.1:5432/support_review_test pnpm test:cms
 pnpm exec playwright install chromium
 pnpm test:e2e
 ```
 
-On this Windows machine, invoke pnpm through Node if it is absent from PATH:
-`node C:\Users\tannaz\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules\pnpm\bin\pnpm.cjs <command>`
+The CMS test runs real migrations, auth/access checks and HTTP boundary checks
+against the built application. It requires the exact isolated database name
+`support_review_test` on localhost. CI provisions a disposable PostgreSQL service.
 
-## Current boundaries
+## Implemented in the current review
 
-Rental-adapted visual direction based on user-supplied desktop/mobile PNG exports. Figma MCP remains quota-blocked; source photo/font assets are still missing, so image slots are explicitly pending. No claim of pixel-exact fidelity. Contact validates but returns 503 without delivery. Booking requires a verified provider URL and exact hostname. No custom checkout, accounts, rates, fake confirmation, or admin authentication. Payload + PostgreSQL is approved; the CMS runtime is not implemented yet. Legal pages are unpublished placeholders. Robots blocks indexing and sitemap is empty.
+- Account-provided Smoobu Booking Engine embedded on `/buchen`, loaded on guest
+  request with honest loading/failure states. No independent checkout or pricing.
+- Floating support panel: page-specific topics, section labels, expandable Q&As,
+  keyboard close/focus return and link to contact.
+- Payload + PostgreSQL admin for support topics with draft/publish/version control,
+  server-side authorization and protected first-admin bootstrap. Public visitors
+  cannot register administrators, write content or read drafts.
+- Contact input validation and parser regression fixes; sending remains disabled.
 
-See TASKS.md for implementation status, TEST_PLAN.md for evidence, and DEPLOYMENT.md for release gates. No production deployment is authorized.
+See ADMIN_GUIDE.md for setup and scope, QUALITY_REVIEW.md for scores and current
+verification, and DEPLOYMENT.md for release gates. Full apartment/media/page CMS,
+customer content/legal text, contact transport and booking/payment acceptance are
+unfinished. No real reservation or charge was initiated.
 
-## Verification of this slice
-Production build, TypeScript and lint pass. Four domain tests and 24 Playwright checks pass across desktop/tablet/mobile Chromium. See TEST_PLAN.md for limitations. Local browser checks used PLAYWRIGHT_CHANNEL=chrome; CI installs Chromium.
+## Verification and delivery
 
-## Git delivery
-Work is committed locally on feat/rental-foundation. Push could not authenticate; sign in through Git Credential Manager and then push this branch. No changes were sent to main. Remote CI has not run.
+Typecheck, lint, domain tests, production build and isolated PostgreSQL checks
+were executed locally; the exact latest counts are in TEST_PLAN.md. The Cloud
+Browser verified the real initial Smoobu form and support interactions. CLI browser
+launch is blocked by the environment; the full automated UI suite is not claimed
+as passing. Remote CI has not run.
+
+The user approved pushing `review/quality-gate` exclusively to
+`tannaz-sh/Vacation-Apartment-Booking-Website` as `pashmak2233` to run remote CI.
+The reviewed changes are committed locally. The remote test branch exists at the
+original baseline; integration writes currently return 403 despite the correct
+user identity. No merge or production deployment is authorized.

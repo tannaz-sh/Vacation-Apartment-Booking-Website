@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import { withPayload } from '@payloadcms/next/withPayload';
 const config: NextConfig = {
   poweredByHeader: false,
   async headers() {
@@ -10,4 +11,4 @@ const config: NextConfig = {
     ] }];
   },
 };
-export default config;
+export default withPayload(config);
